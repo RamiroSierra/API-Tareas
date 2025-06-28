@@ -6,20 +6,24 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
+
     public function up(): void
     {
         Schema::create('tareas', function (Blueprint $table) {
             $table->id();
+            $table->string('titulo');
+            $table->unsignedBigInteger('autor_id');
+            $table->unsignedBigInteger('asignado_id')->nullable();
+            $table->text('cuerpo');
+            $table->dateTime('fecha_expiracion')->nullable();
+            $table->json('categorias')->nullable();
+            $table->json('comentarios')->nullable();
             $table->timestamps();
+            $table->softDeletes();
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
+
     public function down(): void
     {
         Schema::dropIfExists('tareas');
