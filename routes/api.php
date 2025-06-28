@@ -2,7 +2,11 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\TareaController;
 
-Route::get('/user', function (Request $request) {
-    return $request->user();
-})->middleware('auth:sanctum');
+Route::get('/tareas', [TareaController::class, 'ListarTodos']);
+Route::get('/tareas/{id}', [TareaController::class, 'Buscar']);
+Route::post('/tareas', [TareaController::class, 'Crear']);
+Route::put('/tareas/{id}', [TareaController::class, 'Modificar']);
+Route::delete('/tareas/{id}', [TareaController::class, 'Eliminar']);
+Route::post('/tareas/{id}/comentarios', [TareaController::class, 'AgregarComentario']);
