@@ -36,11 +36,15 @@ class TareaController extends Controller
     public function Modificar(Request $request, $id)
     {
         $tarea = Tarea::findOrFail($id);
-        $tarea->titulo = $request->post('titulo');
-        $tarea->asignado_id = $request->post('asignado_id');
-        $tarea->cuerpo = $request->post('cuerpo');
-        $tarea->fecha_expiracion = $request->post('fecha_expiracion');
-        $tarea->categorias = $request->post('categorias');
+        $tarea->titulo = $request->post('titulo', $tarea->titulo);
+        $tarea->asignado_id = $request->post('asignado_id', $tarea->asignado_id);
+        $tarea->cuerpo = $request->post('cuerpo', $tarea->cuerpo);
+        $tarea->fecha_expiracion = $request->post('fecha_expiracion', $tarea->fecha_expiracion);
+        
+        if ($request->has('categorias')) {
+            $tarea->categorias = $request->post('categorias');
+        }
+        
         $tarea->save();
 
         return $tarea;
