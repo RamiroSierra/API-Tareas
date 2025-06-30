@@ -4,9 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Tarea;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Http;
 
 class TareaController extends Controller
 {
+    public function __construct()
+    {
+        $this->historialApiUrl = env('HISTORIAL_API_URL', 'http://api-historial.test/api');
+    }
+    
     public function ListarTodos(Request $request)
     {
         $tareas = Tarea::all();
@@ -30,6 +36,11 @@ class TareaController extends Controller
         $tarea->categorias = $request->post('categorias');
         $tarea->save();
 
+        $this->registrarEnHistorial($tarea->id, 'creacion', [
+            'titulo' => $tarea->titulo,
+            'autor_id' => $tarea->autor_id
+        ]);
+
         return $tarea;
     }
 
@@ -44,6 +55,11 @@ class TareaController extends Controller
         if ($request->has('categorias')) {
             $tarea->categorias = $request->post('categorias');
         }
+
+        $this->registrarEnHistorial($tarea->id, 'actualizacion', [
+            'titulo' => $tarea->titulo,
+            'usuario_id' => $tarea->autor_id,
+        ]);
         
         $tarea->save();
 
@@ -53,6 +69,11 @@ class TareaController extends Controller
     public function Eliminar(Request $request, $id)
     {
         $tarea = Tarea::findOrFail($id);
+        $this->registrarEnHistorial($tarea->id, 'eliminacion', [
+            'titulo' => $tarea->titulo,
+            'usuario_id' => $tarea->autor_id,
+        ]);
+
         $tarea->delete();
         return response()->json(['deleted' => true]);
     }
@@ -73,4 +94,21 @@ class TareaController extends Controller
 
         return $tarea;
     }
+
+    private function registrarEnHistorial(int $tareaId, string $accion, array $datos)
+    {
+        try {
+            $payload = [
+                'tarea_id' => $tareaId,
+                'titulo_tarea' => $datos['titulo'],
+                'estado_actual' => $accion,
+                'usuario_id' => $datos['usuario_id'],
+            ];
+
+            Http::post($this->historialApiUrl.'/historial/registrar', $payload);
+        } catch (\Exception $e) {
+            \Log::error("Error registrando en historial: " . $e->getMessage());
+        }
+    }
+
 }
