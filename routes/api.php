@@ -6,7 +6,10 @@ use App\Http\Controllers\TareaController;
 
 Route::get('/tareas', [TareaController::class, 'ListarTodos']);
 Route::get('/tareas/{id}', [TareaController::class, 'Buscar']);
-Route::post('/tareas', [TareaController::class, 'Crear']);
-Route::put('/tareas/{id}', [TareaController::class, 'Modificar']);
-Route::delete('/tareas/{id}', [TareaController::class, 'Eliminar']);
-Route::post('/tareas/{id}/comentarios', [TareaController::class, 'AgregarComentario']);
+
+Route::middleware(ValidacionToken::class)->group(function () {
+    Route::post('/tareas', [TareaController::class, 'Crear']);
+    Route::put('/tareas/{id}', [TareaController::class, 'Modificar']);
+    Route::delete('/tareas/{id}', [TareaController::class, 'Eliminar']);
+    Route::post('/tareas/{id}/comentarios', [TareaController::class, 'AgregarComentario']);
+});
