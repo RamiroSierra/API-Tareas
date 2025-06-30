@@ -42,7 +42,7 @@ class TareaController extends Controller
             $tarea->id, 
             'creacion', [
             'titulo' => $tarea->titulo,
-            $user['id']
+            'usuario_id' => $user['id']
         ]);
 
         return $tarea;
@@ -64,9 +64,9 @@ class TareaController extends Controller
 
         $this->registrarEnHistorial(
             $tarea->id, 
-            'creacion', [
+            'modificado', [
             'titulo' => $tarea->titulo,
-            $user['id']
+            'usuario_id' => $user['id']
         ]);
         
         $tarea->save();
@@ -81,9 +81,9 @@ class TareaController extends Controller
 
         $this->registrarEnHistorial(
             $tarea->id, 
-            'creacion', [
+            'eliminado', [
             'titulo' => $tarea->titulo,
-            $user['id']
+            'usuario_id' => $user['id']
         ]);
 
         $tarea->delete();

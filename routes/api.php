@@ -3,6 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\TareaController;
+use App\Http\Middleware\ValidacionToken;
 
 Route::get('/tareas', [TareaController::class, 'ListarTodos']);
 Route::get('/tareas/{id}', [TareaController::class, 'Buscar']);
