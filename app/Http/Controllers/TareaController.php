@@ -26,19 +26,23 @@ class TareaController extends Controller
     }
 
     public function Crear(Request $request)
-    {
+    {   
+        $user = $request->user;
+
         $tarea = new Tarea();
         $tarea->titulo = $request->post('titulo');
-        $tarea->autor_id = $request->post('autor_id');
+        $tarea->autor_id = $user['id'];
         $tarea->asignado_id = $request->post('asignado_id');
         $tarea->cuerpo = $request->post('cuerpo');
         $tarea->fecha_expiracion = $request->post('fecha_expiracion');
         $tarea->categorias = $request->post('categorias');
         $tarea->save();
 
-        $this->registrarEnHistorial($tarea->id, 'creacion', [
+        $this->registrarEnHistorial(
+            $tarea->id, 
+            'creacion', [
             'titulo' => $tarea->titulo,
-            'usuario_id' => $tarea->autor_id
+            $user['id']
         ]);
 
         return $tarea;
@@ -46,6 +50,8 @@ class TareaController extends Controller
 
     public function Modificar(Request $request, $id)
     {
+        $user = $request->user;
+
         $tarea = Tarea::findOrFail($id);
         $tarea->titulo = $request->post('titulo', $tarea->titulo);
         $tarea->asignado_id = $request->post('asignado_id', $tarea->asignado_id);
@@ -56,9 +62,11 @@ class TareaController extends Controller
             $tarea->categorias = $request->post('categorias');
         }
 
-        $this->registrarEnHistorial($tarea->id, 'actualizacion', [
+        $this->registrarEnHistorial(
+            $tarea->id, 
+            'creacion', [
             'titulo' => $tarea->titulo,
-            'usuario_id' => $tarea->autor_id,
+            $user['id']
         ]);
         
         $tarea->save();
@@ -68,10 +76,14 @@ class TareaController extends Controller
 
     public function Eliminar(Request $request, $id)
     {
+        $user = $request->user;
         $tarea = Tarea::findOrFail($id);
-        $this->registrarEnHistorial($tarea->id, 'eliminacion', [
+
+        $this->registrarEnHistorial(
+            $tarea->id, 
+            'creacion', [
             'titulo' => $tarea->titulo,
-            'usuario_id' => $tarea->autor_id,
+            $user['id']
         ]);
 
         $tarea->delete();
@@ -80,11 +92,12 @@ class TareaController extends Controller
 
     public function AgregarComentario(Request $request, $id)
     {
+        $user = $request->user;
         $tarea = Tarea::findOrFail($id);
         
         $comentarios = $tarea->comentarios ?? [];
         $comentarios[] = [
-            'usuario_id' => $request->post('usuario_id'),
+            'usuario_id' => $user['id'],
             'texto' => $request->post('texto'),
             'fecha' => now()->toDateTimeString()
         ];
