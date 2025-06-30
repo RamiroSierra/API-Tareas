@@ -38,7 +38,7 @@ class TareaController extends Controller
 
         $this->registrarEnHistorial($tarea->id, 'creacion', [
             'titulo' => $tarea->titulo,
-            'autor_id' => $tarea->autor_id
+            'usuario_id' => $tarea->autor_id
         ]);
 
         return $tarea;
@@ -101,7 +101,7 @@ class TareaController extends Controller
             $payload = [
                 'tarea_id' => $tareaId,
                 'titulo_tarea' => $datos['titulo'],
-                'estado_actual' => $accion,
+                'accion' => $accion,
                 'usuario_id' => $datos['usuario_id'],
             ];
 
