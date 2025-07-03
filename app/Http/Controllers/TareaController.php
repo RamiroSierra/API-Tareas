@@ -40,10 +40,10 @@ class TareaController extends Controller
 
         $this->registrarEnHistorial(
             $tarea->id, 
-            'creacion', [
-            'titulo' => $tarea->titulo,
-            'usuario_id' => $user['id']
-        ]);
+            'modificado',
+            $tarea->titulo,
+            $user['id']
+        );
 
         return $tarea;
     }
@@ -51,23 +51,19 @@ class TareaController extends Controller
     public function Modificar(Request $request, $id)
     {
         $user = $request->user;
-
         $tarea = Tarea::findOrFail($id);
         $tarea->titulo = $request->post('titulo', $tarea->titulo);
         $tarea->asignado_id = $request->post('asignado_id', $tarea->asignado_id);
         $tarea->cuerpo = $request->post('cuerpo', $tarea->cuerpo);
         $tarea->fecha_expiracion = $request->post('fecha_expiracion', $tarea->fecha_expiracion);
-        
-        if ($request->has('categorias')) {
-            $tarea->categorias = $request->post('categorias');
-        }
+        $tarea->categorias = $request->post('categorias' , $tarea->categorias);
 
         $this->registrarEnHistorial(
             $tarea->id, 
-            'modificado', [
-            'titulo' => $tarea->titulo,
-            'usuario_id' => $user['id']
-        ]);
+            'modificado',
+            $tarea->titulo,
+            $user['id']
+        );
         
         $tarea->save();
 
@@ -81,10 +77,10 @@ class TareaController extends Controller
 
         $this->registrarEnHistorial(
             $tarea->id, 
-            'eliminado', [
-            'titulo' => $tarea->titulo,
-            'usuario_id' => $user['id']
-        ]);
+            'modificado',
+            $tarea->titulo,
+            $user['id']
+        );
 
         $tarea->delete();
         return response()->json(['deleted' => true]);
@@ -108,20 +104,16 @@ class TareaController extends Controller
         return $tarea;
     }
 
-    private function registrarEnHistorial(int $tareaId, string $accion, array $datos)
+    private function registrarEnHistorial(int $tareaId, string $accion, string $titulo, int $usuarioId)
     {
-        try {
-            $payload = [
-                'tarea_id' => $tareaId,
-                'titulo_tarea' => $datos['titulo'],
-                'accion' => $accion,
-                'usuario_id' => $datos['usuario_id'],
-            ];
+        $datos = [
+            'tarea_id' => $tareaId,
+            'titulo_tarea' => $titulo,
+            'accion' => $accion,
+            'usuario_id' => $usuarioId,
+        ];
 
-            Http::post($this->historialApiUrl.'/historial/registrar', $payload);
-        } catch (\Exception $e) {
-            \Log::error("Error registrando en historial: " . $e->getMessage());
-        }
+        Http::post($this->historialApiUrl.'/historial/registrar', $datos);
     }
 
 }
