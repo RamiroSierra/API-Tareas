@@ -22,6 +22,6 @@ class Tarea extends Model
     protected $casts = [
         'categorias' => 'array',
         'comentarios' => 'array',
-        'fecha_expiracion' => 'datetime'
+        'fecha_expiracion' => 'date'
     ];
 }

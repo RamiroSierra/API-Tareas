@@ -15,7 +15,7 @@ return new class extends Migration
             $table->unsignedBigInteger('autor_id');
             $table->unsignedBigInteger('asignado_id')->nullable();
             $table->text('cuerpo');
-            $table->dateTime('fecha_expiracion')->nullable();
+            $table->date('fecha_expiracion')->nullable();
             $table->json('categorias')->nullable();
             $table->json('comentarios')->nullable();
             $table->timestamps();
