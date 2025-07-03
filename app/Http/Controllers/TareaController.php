@@ -10,7 +10,7 @@ class TareaController extends Controller
 {
     public function __construct()
     {
-        $this->historialApiUrl = env('HISTORIAL_API_URL', 'http://api-historial.test/api');
+        $this->historialApiUrl = env('HISTORIAL_API_URL', 'http://localhost:8002/api');
     }
     
     public function ListarTodos(Request $request)
