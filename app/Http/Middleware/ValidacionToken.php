@@ -4,34 +4,28 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Http\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Illuminate\Support\Facades\Http;
+use Symfony\Component\HttpFoundation\Response;
 
 class ValidacionToken
 {
     public function handle(Request $request, Closure $next): Response
     {
         $token = $request->bearerToken();
-
+        
         if (!$token) {
-            return response()->json(['error' => 'Token no proporcionado'], 401);
+            return response()->json(['error' => 'Token no enviado'], 401);
         }
 
-        $authServiceUrl = env('AUTH_SERVICE_URL', 'http://servicio-autenticacion.test/api/validate');
-        
         $response = Http::withHeaders([
             'Authorization' => 'Bearer ' . $token
-        ])->get($authServiceUrl);
+        ])->get('http://localhost:8000/api/validate');
 
         if ($response->successful()) {
-            $userData = $response->json();
-            $request->merge(['user' => $userData]);
+            $request->merge(['user' => $response->json()]);
             return $next($request);
         }
 
-        return response()->json([
-            'error' => 'Token inválido o expirado',
-            'details' => $response->json()
-        ], 401);
+        return response()->json(['error' => 'Token inválido'], 401);
     }
 }
