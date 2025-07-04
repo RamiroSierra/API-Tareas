@@ -16,7 +16,7 @@ class TareaController extends Controller
     public function ListarTodos(Request $request)
     {
         $tareas = Tarea::all();
-        return $tareas->json($tareas);
+        return $tareas;
     }
 
     public function Buscar(Request $request, $id)
