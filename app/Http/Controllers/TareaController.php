@@ -16,13 +16,13 @@ class TareaController extends Controller
     public function ListarTodos(Request $request)
     {
         $tareas = Tarea::all();
-        return $tareas;
+        return $tareas->json($tareas);
     }
 
     public function Buscar(Request $request, $id)
     {
         $tarea = Tarea::findOrFail($id);
-        return $tarea;
+        return response()->json($tarea);
     }
 
     public function Crear(Request $request)
